@@ -6,11 +6,14 @@ import os
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-SECRET_KEY = os.getenv("JWT_SECRET")
+SECRET_KEY = os.getenv("JWT_SECRET") or "supersecretkey"
 ALGORITHM = "HS256"
 
 def verify_password(plain, hashed):
     return pwd_context.verify(plain, hashed)
+
+def hash_password(password: str):
+    return pwd_context.hash(password)
 
 def authenticate_user(db: Session, email: str, password: str):
     user = db.query(User).filter(User.email == email).first()
@@ -24,31 +27,31 @@ def authenticate_user(db: Session, email: str, password: str):
     return user
 
 def create_token(data: dict):
-    return jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
+    payload = {
+        "user_id": data["user_id"]
+    }
+    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
+def decode_token(token: str):
+    try:
+        return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    except:
+        return None
 
-
-# hashear contraseña
-def hash_password(password: str):
-    return pwd_context.hash(password)
-# obtener usuario por email
 def get_user_by_email(db: Session, email: str):
     return db.query(User).filter(User.email == email).first()
-# crear usuario, si existe devuelve nada
+
 def create_user(db: Session, email: str, password: str):
     existing = get_user_by_email(db, email)
 
     if existing:
-        return None  # ya existe
-    # llama a la definicion de hashear pasword
+        return None
+
     hashed = hash_password(password)
-    # crea un nuevo usuario
     new_user = User(email=email, password=hashed)
-    # colocar un objeto en la session db
+
     db.add(new_user)
-    # omite los cambios pendientes y confirma la transaccion actual
     db.commit()
-    # caduca y actualiza los atribustos en la instacia
     db.refresh(new_user)
 
     return new_user

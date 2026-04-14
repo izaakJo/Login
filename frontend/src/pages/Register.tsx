@@ -13,9 +13,9 @@ export default function SignupPage() {
       const res = await registerRequest(email, password)
 
       if (res.message) {
-        alert(res.message)
+        //alert(res.message)
         // opcional: redirigir a login
-        // window.location.href = "/login"
+        window.location.href = "/login"
       } else {
         alert(res.detail || "Error en registro")
       }

@@ -1,11 +1,12 @@
 import { useState } from "react"
 import { GalleryVerticalEnd } from "lucide-react"
 import { loginRequest } from "../services/auth"
+import { useNavigate } from "react-router-dom"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-
+  const navigate = useNavigate()
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -14,9 +15,9 @@ export default function LoginPage() {
 
       if (res.token) {
         localStorage.setItem("token", res.token)
-        alert("Login correcto")
+        //alert("Login correcto")
         // aquí podrías redirigir
-        // window.location.href = "/dashboard"
+        navigate("/dashboard")
       } else {
         alert(res.detail || "Error en login")
       }

@@ -1,10 +1,8 @@
-import { Routes, Route } from "react-router-dom"
+import { Routes, Route} from "react-router-dom"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
-
-function Dashboard() {
-  return <h1>Dashboard</h1>
-}
+import Dashboard from "./pages/Dashboard"
+import ProtectedRoute from "./components/ProtectedRoute"
 
 function App() {
   return (
@@ -12,7 +10,15 @@ function App() {
       <Route path="/" element={<Login />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Register />} />
-      <Route path="/dashboard" element={<Dashboard />} />
+
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   )
 }
