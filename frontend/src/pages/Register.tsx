@@ -46,7 +46,7 @@ export default function SignupPage() {
 
             <form onSubmit={handleRegister} className="flex flex-col gap-4">
               <h2 className="text-xl font-semibold text-center">
-                Crear cuenta
+                Crear Una cuenta
               </h2>
 
               <input
