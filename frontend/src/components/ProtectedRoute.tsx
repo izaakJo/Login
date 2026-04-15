@@ -4,7 +4,10 @@ import { useAuth } from "../context/AuthContext"
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, initialized } = useAuth()
 
-  if (!initialized) return null
+  // 👇 evita pantalla en blanco infinita
+  if (!initialized) {
+    return <div className="p-4">Verificando sesión...</div>
+  }
 
   if (!user) {
     return <Navigate to="/login" replace />
