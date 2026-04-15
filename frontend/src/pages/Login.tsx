@@ -6,23 +6,40 @@ import { useNavigate } from "react-router-dom"
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
+
+  // const navigate = useNavigate()
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (loading) return // 🔒 evita doble click
+
+    setLoading(true)
 
     try {
       const res = await loginRequest(email, password)
 
       if (res.token) {
         localStorage.setItem("token", res.token)
-        //alert("Login correcto")
-        // aquí podrías redirigir
-        navigate("/dashboard")
+        window.location.href = "/dashboard"
+        // 🔥 navegación limpia (sin historial atrás)
+        // navigate("/dashboard", { replace: true })
+
       } else {
-        alert(res.detail || "Error en login")
+        alert(res.detail || "Credenciales incorrectas")
       }
-    } catch (error) {
-      alert("Error de conexión")
+
+    } catch (error: any) {
+      console.error(error)
+
+      alert(
+        error?.response?.data?.detail ||
+        "Error de conexión con el servidor"
+      )
+
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -33,12 +50,12 @@ export default function LoginPage() {
         
         {/* LOGO */}
         <div className="flex justify-center gap-2 md:justify-start">
-          <a href="#" className="flex items-center gap-2 font-medium">
+          <div className="flex items-center gap-2 font-medium">
             <div className="flex size-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
               <GalleryVerticalEnd className="size-4" />
             </div>
             Mi Sistema
-          </a>
+          </div>
         </div>
 
         {/* FORM */}
@@ -70,19 +87,21 @@ export default function LoginPage() {
 
               <button
                 type="submit"
-                className="bg-primary text-white rounded-md p-2 hover:opacity-90"
+                disabled={loading}
+                className="bg-primary text-white rounded-md p-2 hover:opacity-90 disabled:opacity-50"
               >
-                Ingresar
+                {loading ? "Ingresando..." : "Ingresar"}
               </button>
+
               <p className="text-sm text-center text-muted-foreground">
-              ¿No tienes cuenta?{" "}
-              <a
-                href="/signup"
-                className="text-primary hover:underline font-medium"
-              >
-                Crear cuenta
-              </a>
-            </p>
+                ¿No tienes cuenta?{" "}
+                <a
+                  href="/signup"
+                  className="text-primary hover:underline font-medium"
+                >
+                  Crear cuenta
+                </a>
+              </p>
             </form>
 
           </div>

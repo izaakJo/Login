@@ -19,8 +19,8 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { ChevronsUpDownIcon, SparklesIcon, BadgeCheckIcon, CreditCardIcon, BellIcon, LogOutIcon } from "lucide-react"
-import { useAuth } from "../context/AuthContext"
-import { useNavigate } from "react-router-dom"
+// import { useAuth } from "../context/AuthContext"
+// import { useNavigate } from "react-router-dom"
 
 export function NavUser({
   user,
@@ -32,12 +32,14 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
-  const { logout } = useAuth()
-  const navigate = useNavigate()
+  // const { logout } = useAuth()
+  // const navigate = useNavigate()
 
   const handleLogout = () => {
-    logout()
-    navigate("/login")
+    // logout()
+    localStorage.removeItem("token")
+    window.location.href = "/login"
+    // navigate("/login", { replace: true })
   }
   return (
     <SidebarMenu>
